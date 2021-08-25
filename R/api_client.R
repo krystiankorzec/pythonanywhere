@@ -1,11 +1,11 @@
-#' Set credentials to pythonanywhere as environment variables  
+#' Set credentials to pythonanywhere as environment variables
 #'
 #' Initialize env variables. Note that they disappear after session is closed
 #'
 #' @param username Your pythonanywhere username
 #' @param token Your pythonanywhere personal token
 #'
-#' @return sets envs 
+#' @return sets envs
 #'
 #' @examples
 #' pyany_auth(username, token)
@@ -30,17 +30,17 @@ pyany_auth <- function(username, token){
 pyany_list_files <- function(folder_name){
   creds <- get_creds()
   api_base <- glue::glue("https://www.pythonanywhere.com/api/v0/user/{creds$username}/")
-  
+
   path <- glue::glue("files/path/home/{creds$username}/{folder_name}")
   resp <- httr::GET(glue::glue(api_base, path),
                    httr::add_headers("Authorization" = glue::glue("Token {creds$token}")))
-  
+
   if (httr::http_type(resp) != "application/json") {
     stop("API did not return json", call. = FALSE)
   }
-  
+
   parsed <- jsonlite::fromJSON(httr::content(resp, "text"), simplifyVector = FALSE)
-  
+
   structure(
     list(
       content = names(parsed),
@@ -58,7 +58,7 @@ print.github_api <- function(x, ...) {
 }
 #' Download a file
 #'
-#' Downloads a file 
+#' Downloads a file
 #'
 #' @param file_path Path to file, for example folder_name/file_name.extension
 #' @param file_extension File extension. For now only .rds and .csv are working
@@ -72,14 +72,14 @@ print.github_api <- function(x, ...) {
 pyany_download_file <- function(file_path, file_extension = NULL){
   creds <- get_creds()
   api_base <- glue::glue("https://www.pythonanywhere.com/api/v0/user/{creds$username}/")
-  
+
   resp <- httr::GET(glue::glue(api_base, "files/path/home/{creds$username}/{file_path}"),
                    httr::add_headers("Authorization" = glue::glue("Token {creds$token}")))
-  
+
   if (httr::http_type(resp) != "application/octet-stream") {
     stop("API did not return binary file", call. = FALSE)
   }
-  
+
   resp <- pyany_read_file(resp, type = file_extension)
 }
 
@@ -91,7 +91,7 @@ pyany_pat <- function(){
     stop("Please set env var PYANYWHERE_PAT to your pythonanywhere personal access token, see instructions in package readme page.",
          call. = FALSE)
   }
-  pat 
+  pat
 }
 
 pyany_username <- function(){
@@ -103,7 +103,7 @@ pyany_username <- function(){
   username
 }
 get_creds <- function(){
-  creds <- list(  
+  creds <- list(
     token  = pyany_pat(),
     username = pyany_username()
   )
