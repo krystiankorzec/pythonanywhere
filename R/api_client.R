@@ -55,7 +55,7 @@ print.github_api <- function(x, ...) {
   cat("<pythonanywhere_api directories list ", sep = "")
   str(x$content)
   invisible(x)
-}
+}ggg
 #' Download a file
 #'
 #' Downloads a file
